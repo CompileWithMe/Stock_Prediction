@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Stock Price Prediction</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+
+<div class="box">
+
+    <div class="nav">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/info">How It Works</a>
+    <a href="/contact">Contact</a>
+</div>
+    <h1>📈 Stock Price Prediction</h1>
+
+    <form action="/predict" method="POST">
+
+        <input type="text"
+               name="stock"
+               placeholder="Enter Stock Symbol (AAPL)"
+               required>
+
+        <button type="submit">Predict Price</button>
+
+    </form>
+
+    {% if stock %}
+
+    <div class="result">
+
+        <h2>{{ stock }}</h2>
+
+        <p><strong>Latest Price:</strong> ${{ latest }}</p>
+
+        <p><strong>Predicted Price:</strong> ${{ prediction }}</p>
+
+    </div>
+
+    {% endif %}
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+</div>
+{% if stock %}
+
+<div class="result">
+
+    <h2>{{ stock }}</h2>
+
+    <p><strong>Latest Price:</strong> ${{ latest }}</p>
+
+    <p><strong>Predicted Price:</strong> ${{ prediction }}</p>
+
+</div>
+
+<!-- CHART SECTION -->
+<div class="chart-box">
+
+    <canvas id="stockChart"></canvas>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = {{ dates | tojson }};
+    const dataValues = {{ prices | tojson }};
+
+    new Chart(document.getElementById('stockChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Stock Price',
+                data: dataValues,
+                borderColor: '#1d2671',
+                backgroundColor: 'rgba(29,38,113,0.2)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+
+{% endif %}
+
+</body>
+
+</html>
